@@ -1,11 +1,11 @@
 ## Interface: 20501
-## Title: SilenceLFG
+## Title: Sonar
 ## Version: .69
-## Notes: Learning Lua and wow programming
+## Notes: Cycle through available minimap trackers
 ## Author: MarxWasRight-Fairbanks
-## SavedVariables: SLFG_lfgStatus
-## SavedVariablesPerCharacter: SLFG_pos
+## SavedVariables: SONAR_Save
+## SavedVariablesPerCharacter: SONAR_types
 ## DefaultState: enabled
 
-SLFG_core.lua
-SLFG_core.xml
+SONAR_core.lua
+SONAR_core.xml

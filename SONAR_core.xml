@@ -1,18 +1,20 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/">
 
     <!-- Include script file that will hold the functions called by the frame and functions within source file-->
-    <Script file = "SLFG_core.lua" />
+    <Script file = "SONAR_core.lua" />
 
-    <Frame name="SLFG_CORE">
+    <Frame name="SONAR_CORE_FRAME">
         <Scripts>
             <OnLoad>
-                print("SLFG XML DEBUG");
-                self:RegisterEvent("TAXIMAP_OPENED");
+                print("SONAR XML DEBUG");
+                <!-- Register an ENTERING_COMBAT event listener here  -->
+                self:RegisterEvent("PLAYER_REGEN_DISABLED");
                 initializeSonar(self);
             </OnLoad>
             <OnEvent>
-                print("TRIGGERING SLFG UNMOUNT");
-                if (event == "TAXIMAP_OPENED") then unmount(self); end
+                <!-- Register an ENTERING_COMBAT event listener here  -->
+                <!-- if (event == "ENTER_COMBAT") then stopSonar(self); end  -->
+                if (event == "PLAYER_REGEN_DISABLED") then stopSonar(self); end
             </OnEvent>
         </Scripts>
     </Frame>
