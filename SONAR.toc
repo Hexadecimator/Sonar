@@ -1,0 +1,11 @@
+## Interface: 20501
+## Title: SilenceLFG
+## Version: .69
+## Notes: Learning Lua and wow programming
+## Author: MarxWasRight-Fairbanks
+## SavedVariables: SLFG_lfgStatus
+## SavedVariablesPerCharacter: SLFG_pos
+## DefaultState: enabled
+
+SLFG_core.lua
+SLFG_core.xml

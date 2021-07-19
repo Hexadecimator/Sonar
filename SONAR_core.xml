@@ -1,0 +1,20 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/">
+
+    <!-- Include script file that will hold the functions called by the frame and functions within source file-->
+    <Script file = "SLFG_core.lua" />
+
+    <Frame name="SLFG_CORE">
+        <Scripts>
+            <OnLoad>
+                print("SLFG XML DEBUG");
+                self:RegisterEvent("TAXIMAP_OPENED");
+                initializeSonar(self);
+            </OnLoad>
+            <OnEvent>
+                print("TRIGGERING SLFG UNMOUNT");
+                if (event == "TAXIMAP_OPENED") then unmount(self); end
+            </OnEvent>
+        </Scripts>
+    </Frame>
+
+</Ui>
