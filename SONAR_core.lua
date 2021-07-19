@@ -26,12 +26,6 @@ local sonarIDX = 0;
 local sonarHasFishing = false;
 local sonarStarting = true;
 
--- allow use of arrows inside windows
--- (so your char won't move in game)
-for i = 1, NUM_CHAT_WINDOWS do
-    _G["ChatFrame"..i.."EditBox"]:SetAltArrowKeyMode(false)
-end
-
 -- **********************************************
 -- ** START MAIN FRAME DEFINITION SECTION *******
 -- **********************************************
@@ -75,14 +69,6 @@ function initializeSonar(self)
         sonarRunning = false;
         print("|cffF94F97NO TRACKING DETECTED - SONAR DISABLED|r");
     end
-
-    --[[
-    print(" -- Final sonarTrackerTypes contents -- ");
-    for i=1,sonarIDX do
-        print(sonarTrackerID[i]);
-    end
-    --]]
-
 end
 
 function cycleMinimapTracker(self)
@@ -102,14 +88,23 @@ function cycleMinimapTracker(self)
             sonarCurrID = sonarCurrID + 1;
         elseif sonarStarting == true then
             sonarStarting = false;
+            ---[[
             if (sonarIDX <= 0 and sonarHasFishing == true) then
-                --we may not needs this check anymore since we detect
+                --we may not need this check anymore since we detect
                 --# of tracking types in the initializer function
                 --(tracked by variable sonarRunning)
+                --!! Cannot remove this code without robustness testing though
                 print("|cffF94F97only fishing detected, shutting down|r");
                 CastSpellByName("Find Fish");
                 sonarRunning = false;
             end
+            --]]
+            -- TODO1: remove all of the above if statment (2+ gathering prof check is taken care of in initializer)
+            -- TODO2: make the if statement below only do SetTracking(sonarCurrID, true);
+            --       (because sonarCurrID + 1; is done in initialize function only if
+            --       the current character has 2+ gathering professions)
+            -- !!! NEED TO TEST !!!
+
             if (sonarIDX > 0) then
                 SetTracking(sonarCurrID,true);
                 sonarCurrID = sonarCurrID + 1;
@@ -119,8 +114,7 @@ function cycleMinimapTracker(self)
 end
 
 function stopSonar(self)
-    -- stop the addon from eating up GCDs when the player
-    -- enters combat
+    -- stop the addon's cycling action
     if (sonarTimer ~= nil) then
         if (sonarTimer:IsCancelled() == false) then
             sonarTimer:Cancel();
