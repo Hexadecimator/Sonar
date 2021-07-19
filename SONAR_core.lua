@@ -67,7 +67,7 @@ function initializeSonar(self)
     -- if we found nothing then turn off the addon
     if ((sonarIDX <= 1 and sonarHasFishing == false) or (sonarIDX <= 0 and sonarHasFishing == true)) then
         sonarRunning = false;
-        print("|cffF94F97NO TRACKING DETECTED - SONAR DISABLED|r");
+        print("|cffF94F97NEED MINIMUM 2+ GATHERING PROFESSIONS - SONAR DISABLED|r");
     end
 end
 
