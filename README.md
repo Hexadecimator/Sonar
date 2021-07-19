@@ -1,7 +1,7 @@
 # Sonar - WoW TBC Classic Addon for Gathering Professions
 WoW TBC Classic Addon for cycling through (available) minimap tracking types for gathering professions
 
-Upon Addon initialization, all available tracking types (for professions - things like track flightmaster or track mailbox do not count for this addon) for the current character are detected and added to an array. This array is then looped through continuously and every GCD the next tracker in the list is selected; this almost gives the feel to the player like their minimap is a radar pinging-out and detecting all available gatherable items in the vicinity.
+Upon Addon initialization, all available tracking types (for professions - things like track flightmaster or track mailbox do not count for this addon) for the current character are detected and added to an array. This array is then looped through continuously and every GCD the next tracker in the list is selected; this almost gives the feel to the player like their minimap is a radar: pinging-out and detecting all available gatherable items in the vicinity.
 
 Note that this addon will only work If the currently logged-in character has at MINIMUM 2 profession minimap trackers to toggle through. If the current character has 1 or less toggle-able minimap gathering professions, the Sonar addon with turn itself off.
 
