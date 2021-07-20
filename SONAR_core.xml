@@ -6,15 +6,21 @@
     <Frame name="SONAR_CORE_FRAME">
         <Scripts>
             <OnLoad>
-                print("SONAR XML DEBUG");
                 <!-- Register an ENTERING_COMBAT event listener here  -->
                 self:RegisterEvent("PLAYER_REGEN_DISABLED");
-                initializeSonar(self);
+                <!-- Register an Entering world event listener here -->
+                <!-- PEW is chosen over ADDON_LOADED because AL happens too fast -->
+                self:RegisterEvent("PLAYER_ENTERING_WORLD")
             </OnLoad>
             <OnEvent>
-                <!-- Register an ENTERING_COMBAT event listener here  -->
-                <!-- if (event == "ENTER_COMBAT") then stopSonar(self); end  -->
-                if (event == "PLAYER_REGEN_DISABLED") then stopSonar(self); end
+                <!-- ENTERING_COMBAT event here  -->
+                if (event == "PLAYER_REGEN_DISABLED") then stopSonar(); end
+                <!-- ADDON LOAD event here -->
+                if (event == "PLAYER_ENTERING_WORLD") then 
+                    initializeSonar(self); 
+                    self:UnregisterEvent('PLAYER_ENTERING_WORLD')
+                    self.ADDON_LOADED = nil
+                end
             </OnEvent>
         </Scripts>
     </Frame>
