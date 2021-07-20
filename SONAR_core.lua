@@ -11,6 +11,8 @@
 -- 3. Disable addon if current character only has 1 or less
 --    tracking types [DONE]
 --
+--      Default text color: 0xffF94F97
+--
 -- ***********************************************************
 
 local AddOn, SONARcore = ...;
@@ -26,6 +28,14 @@ local sonarIDX = 0;
 local sonarHasFishing = false;
 local sonarStarting = true;
 
+-- experimental to make dealing with colors easier
+local clr1_s = "|cffF94F97[SONAR] ";
+local clr1_e = "|r";
+
+function printclr(instring)
+    print(clr1_s .. instring .. clr1_e);
+end
+
 -- **********************************************
 -- ** START MAIN FRAME DEFINITION SECTION *******
 -- **********************************************
@@ -39,23 +49,20 @@ function initializeSonar(self)
         --name, texture, active, category, nested = GetTrackingInfo(i);
         name, _, _, category, _ = GetTrackingInfo(i);
 
-        -- i'm sorry for this
-
-        -- TODO: FINISH THIS SHIT
-
-        if ((category == "spell") and (name ~= "Find Herbs" or 
-                                               "Track Beasts" or 
-                                               "Track Demons" or
-                                               "Track Dragonkin" or
-                                               "Track Elementals" or
-                                               "Track Giants" or
-                                               "Track Hidden" or
-                                               "Track Undead" or
-                                               "Sense Undead" or
-                                               "Track Humanoids")) then
+        -- this if statement is an affront to god and i'm sorry
+        if ((category == "spell") and ((name ~= "Track Humanoids")  and
+                                       (name ~= "Track Beasts")     and
+                                       (name ~= "Track Demons")     and
+                                       (name ~= "Track Dragonkin")  and
+                                       (name ~= "Track Elementals") and
+                                       (name ~= "Track Giants")     and
+                                       (name ~= "Track Hidden")     and
+                                       (name ~= "Track Undead")     and
+                                       (name ~= "Sense Undead")))   then -- add "Find Herbs" when testing
             sonarIDX = sonarIDX + 1;
             sonarTrackerID[sonarIDX] = i;
-            print("|cffF94F97[SONAR] " .. name .. " added to sonarTrackerTypes." .. "|r");
+            --print(clr1_s .. name .. " added to sonarTrackerTypes." .. clr1_e);
+            printclr(name .. " added to sonarTrackerTypes."); -- testing printclr(instring) function
         end
     end
 
@@ -83,10 +90,11 @@ function initializeSonar(self)
     --print("namechk: " .. namechk);
     if ((sonarIDX <= 1 and sonarHasFishing == false) or (sonarIDX <= 0 and sonarHasFishing == true) or (sonarIDX == 1 and sonarHasFishing == true and namechk == "Find Fish")) then
         sonarRunning = false;
-        print("|cffF94F97[SONAR] NEED MINIMUM 2+ GATHERING PROFESSIONS - SONAR DISABLED|r");
+        print(clr1_s .. "NEED MINIMUM 2+ GATHERING PROFESSIONS - SONAR DISABLED" .. clr1_e);
     end
 end
 
+--[[ This is the old version of cycleMinimapTracker
 function cycleMinimapTracker(self)
     --R: 0xF9
     --G: 0x4F
@@ -104,7 +112,7 @@ function cycleMinimapTracker(self)
             sonarCurrID = sonarCurrID + 1;
         elseif sonarStarting == true then
             sonarStarting = false;
-            ---[[
+
             if (sonarIDX <= 0 and sonarHasFishing == true) then
                 --we may not need this check anymore since we detect
                 --# of tracking types in the initializer function
@@ -114,26 +122,42 @@ function cycleMinimapTracker(self)
                 CastSpellByName("Find Fish");
                 sonarRunning = false;
             end
-            --]]
-            -- TODO1: remove all of the above if statment (2+ gathering prof check is taken care of in initializer)
-            -- TODO2: make the if statement below only do SetTracking(sonarCurrID, true);
-            --       (because sonarCurrID + 1; is done in initialize function only if
-            --       the current character has 2+ gathering professions)
-            -- !!! NEED TO TEST !!!
 
-            if (sonarIDX > 0) then
-                SetTracking(sonarCurrID,true);
-                sonarCurrID = sonarCurrID + 1;
-            end
+            -- TODO1: remove all of the above if statment (2+ gathering prof check is taken care of in initializer)
+
+            --if (sonarIDX > 0) then
+            SetTracking(sonarCurrID,true);
+            sonarCurrID = sonarCurrID + 1;
+            --end
         end
     end   
 end
+--]]
+
+---[[ this is the new and improved version of cycleMinimapTracker
+function cycleMinimapTracker(self)
+    --R: 0xF9
+    --G: 0x4F
+    --B: 0x97
+    if sonarRunning == true then
+        if (sonarCurrID > sonarIDX) then
+            sonarCurrID = 1;
+            if sonarHasFishing == true then
+                CastSpellByName("Find Fish");
+                return; --break out of this function
+            end
+        end
+        SetTracking(sonarCurrID,true);
+        sonarCurrID = sonarCurrID + 1;
+    end   
+end
+--]]
 
 function stopSonar()
     -- stop the addon's cycling action
     if (sonarTimer ~= nil) then
         if not sonarTimer:IsCancelled() then
-            --print("not cancelled");
+            --print("not cancelled"); -- debug
         end
         if not sonarTimer:IsCancelled() then
             sonarTimer:Cancel();
@@ -166,12 +190,12 @@ SlashCmdList["SONAR"] = function(msg)
         stopSonar();
     elseif (msg == "TRACKTYPE") then
         if sonarRunning == false then
-            print("|cffF94F97SONAR did not detect enough tracking types!|r")
+            print(clr1_s .. "did not detect enough tracking types!" .. clr1_e);
         else
             print("|cffF94F97" .. " -- SONAR DETECTED TRACKERS -- " .. "|r");
             for i=1,sonarIDX do
                 nametmp, _, _, _, _ = GetTrackingInfo(i);
-                print("|cffF94F97" .. sonarTrackerID[i] .. "- " .. nametmp .. "|r");
+                print(clr1_s .. sonarTrackerID[i] .. "- " .. nametmp .. clr1_e);
             end
         end
     else
