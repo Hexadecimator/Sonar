@@ -40,9 +40,11 @@ function initializeSonar(self)
         name, _, _, category, _ = GetTrackingInfo(i);
 
         if category == "spell" then
-            sonarIDX = sonarIDX + 1;
-            sonarTrackerID[sonarIDX] = i;
-            print("|cffF94F97[SONAR] " .. name .. " added to sonarTrackerTypes." .. "|r");
+            if name ~= "Sense Undead" or "Track Humanoids" then
+                sonarIDX = sonarIDX + 1;
+                sonarTrackerID[sonarIDX] = i;
+                print("|cffF94F97[SONAR] " .. name .. " added to sonarTrackerTypes." .. "|r");
+            end
         end
     end
 
