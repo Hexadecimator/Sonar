@@ -39,12 +39,23 @@ function initializeSonar(self)
         --name, texture, active, category, nested = GetTrackingInfo(i);
         name, _, _, category, _ = GetTrackingInfo(i);
 
-        if category == "spell" then
-            if name ~= "Sense Undead" or "Track Humanoids" then
-                sonarIDX = sonarIDX + 1;
-                sonarTrackerID[sonarIDX] = i;
-                print("|cffF94F97[SONAR] " .. name .. " added to sonarTrackerTypes." .. "|r");
-            end
+        -- i'm sorry for this
+
+        -- TODO: FINISH THIS SHIT
+
+        if ((category == "spell") and (name ~= "Find Herbs" or 
+                                               "Track Beasts" or 
+                                               "Track Demons" or
+                                               "Track Dragonkin" or
+                                               "Track Elementals" or
+                                               "Track Giants" or
+                                               "Track Hidden" or
+                                               "Track Undead" or
+                                               "Sense Undead" or
+                                               "Track Humanoids")) then
+            sonarIDX = sonarIDX + 1;
+            sonarTrackerID[sonarIDX] = i;
+            print("|cffF94F97[SONAR] " .. name .. " added to sonarTrackerTypes." .. "|r");
         end
     end
 
