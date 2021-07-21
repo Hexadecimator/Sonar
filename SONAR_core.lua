@@ -28,22 +28,18 @@ local sonarIDX = 0;
 local sonarHasFishing = false;
 local sonarStarting = true;
 
--- experimental to make dealing with colors easier
-local clr1_s = "|cffF94F97[SONAR] ";
-local clr1_e = "|r";
-
-function printclr(instring)
-    print(clr1_s .. instring .. clr1_e);
-end
-
 -- **********************************************
 -- ** START MAIN FRAME DEFINITION SECTION *******
 -- **********************************************
 
+function printclr(instring)
+    print("|cffF94F97[SONAR] " .. instring .. "|r");
+end
+
 function initializeSonar(self)
     --
     local tc = GetNumTrackingTypes();
-    --print("|cffF94F97num tracking type available: |r" .. tc);
+    --printclr("num tracking type available: " .. tc);
   
     for i=1,tc do
         --name, texture, active, category, nested = GetTrackingInfo(i);
@@ -58,11 +54,10 @@ function initializeSonar(self)
                                        (name ~= "Track Giants")     and
                                        (name ~= "Track Hidden")     and
                                        (name ~= "Track Undead")     and
-                                       (name ~= "Sense Undead")))   then -- add "Find Herbs" when testing
+                                       (name ~= "Sense Undead")))   then
             sonarIDX = sonarIDX + 1;
             sonarTrackerID[sonarIDX] = i;
-            --print(clr1_s .. name .. " added to sonarTrackerTypes." .. clr1_e);
-            printclr(name .. " added to sonarTrackerTypes."); -- testing printclr(instring) function
+            printclr(name .. " added to sonarTrackerTypes.");
         end
     end
 
@@ -72,10 +67,10 @@ function initializeSonar(self)
     skillType, special = GetSpellBookItemInfo("Find Fish");
 
     if (skillType == nil) then
-        --print("No fishing"); 
+        --printclr("No fishing"); 
         sonarHasFishing = false;
     elseif (skillType ~= nil) then
-        --print("Fisherman detected");
+        --printclr("Fisherman detected");
         sonarHasFishing = true;
     end
 
@@ -87,81 +82,36 @@ function initializeSonar(self)
 
     -- if we found nothing then turn off the addon
     namechk, _, _, _, _ = GetTrackingInfo(1);
-    --print("namechk: " .. namechk);
+    --printclr("namechk: " .. namechk);
     if ((sonarIDX <= 1 and sonarHasFishing == false) or (sonarIDX <= 0 and sonarHasFishing == true) or (sonarIDX == 1 and sonarHasFishing == true and namechk == "Find Fish")) then
         sonarRunning = false;
-        print(clr1_s .. "NEED MINIMUM 2+ GATHERING PROFESSIONS - SONAR DISABLED" .. clr1_e);
+        printclr("NEED MINIMUM 2+ GATHERING PROFESSIONS - SONAR DISABLED");
     end
 end
 
---[[ This is the old version of cycleMinimapTracker
 function cycleMinimapTracker(self)
-    --R: 0xF9
-    --G: 0x4F
-    --B: 0x97
-    if sonarRunning == true then
-        if sonarStarting == false then
-            if (sonarCurrID > sonarIDX) then
-                sonarCurrID = 1;
-                if sonarHasFishing == true then
-                    CastSpellByName("Find Fish");
-                    return; --break out of this function
-                end
-            end
-            SetTracking(sonarCurrID,true);
-            sonarCurrID = sonarCurrID + 1;
-        elseif sonarStarting == true then
-            sonarStarting = false;
-
-            if (sonarIDX <= 0 and sonarHasFishing == true) then
-                --we may not need this check anymore since we detect
-                --# of tracking types in the initializer function
-                --(tracked by variable sonarRunning)
-                --!! Cannot remove this code without robustness testing though
-                print("|cffF94F97[SONAR] only fishing detected, shutting down|r");
-                CastSpellByName("Find Fish");
-                sonarRunning = false;
-            end
-
-            -- TODO1: remove all of the above if statment (2+ gathering prof check is taken care of in initializer)
-
-            --if (sonarIDX > 0) then
-            SetTracking(sonarCurrID,true);
-            sonarCurrID = sonarCurrID + 1;
-            --end
-        end
-    end   
-end
---]]
-
----[[ this is the new and improved version of cycleMinimapTracker
-function cycleMinimapTracker(self)
-    --R: 0xF9
-    --G: 0x4F
-    --B: 0x97
     if sonarRunning == true then
         if (sonarCurrID > sonarIDX) then
             sonarCurrID = 1;
             if sonarHasFishing == true then
                 CastSpellByName("Find Fish");
-                return; --break out of this function
+                return;
             end
         end
         SetTracking(sonarCurrID,true);
         sonarCurrID = sonarCurrID + 1;
     end   
 end
---]]
 
 function stopSonar()
     -- stop the addon's cycling action
     if (sonarTimer ~= nil) then
         if not sonarTimer:IsCancelled() then
-            --print("not cancelled"); -- debug
+            --printclr("not cancelled"); -- debug
         end
         if not sonarTimer:IsCancelled() then
             sonarTimer:Cancel();
-            print("|cffF94F97[SONAR] Halted!|r");
+            printclr("Halted!");
         end
     end
 end
@@ -175,12 +125,12 @@ SLASH_SONAR1 = "/snr";
 SlashCmdList["SONAR"] = function(msg)
     msg = string.upper(msg);
     if (msg == "S") then
-        --print("sonarIDX: " .. sonarIDX);
+        --printclr("sonarIDX: " .. sonarIDX);
         --[[
         if sonarRunning then
-            print("sonarRunning TRUE");
+            printclr("sonarRunning TRUE");
         else
-            print("sonarRunning FALSE");
+            printclr("sonarRunning FALSE");
         end
         --]]
         if sonarRunning == true then -- we've detected there are at least 2 trackers to switch between
@@ -190,19 +140,19 @@ SlashCmdList["SONAR"] = function(msg)
         stopSonar();
     elseif (msg == "TRACKTYPE") then
         if sonarRunning == false then
-            print(clr1_s .. "did not detect enough tracking types!" .. clr1_e);
+            printclr("Did not detect enough tracking types!");
         else
-            print("|cffF94F97" .. " -- SONAR DETECTED TRACKERS -- " .. "|r");
+            printclr(" -- SONAR DETECTED TRACKERS -- ");
             for i=1,sonarIDX do
                 nametmp, _, _, _, _ = GetTrackingInfo(i);
-                print(clr1_s .. sonarTrackerID[i] .. "- " .. nametmp .. clr1_e);
+                printclr(sonarTrackerID[i] .. "- " .. nametmp);
             end
         end
     else
-        print("|cffF94F97 -- SONAR ADDON HELP -- |r");
-        print("|cffF94F00'/snr S' to start Sonar|r");
-        print("|cffF94F00'/snr E' to stop Sonar|r");
-        print("|cffF94F00'/snr TRACKTYPE' to print detected tacking types|r");
+        printclr(" -- SONAR ADDON HELP -- ");
+        printclr("'/snr S' to start Sonar");
+        printclr("'/snr E' to stop Sonar");
+        printclr("'/snr TRACKTYPE' to print detected tacking types");
     end
 end
 
