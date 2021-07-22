@@ -1,8 +1,8 @@
 ## Interface: 20501
 ## Title: Sonar
-## Version: .69
+## Version: 1.0
 ## Notes: Cycle through available minimap trackers ("/snr help")
-## Author: MarxWasRight-Fairbanks
+## Author: MarxWasRight-Fairbanks[H]
 ## SavedVariables: SONAR_Save
 ## SavedVariablesPerCharacter: SONAR_types
 ## DefaultState: enabled

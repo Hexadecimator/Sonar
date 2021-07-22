@@ -1,20 +1,21 @@
 -- ***********************************************************
--- Addon: SONAR
+-- Addon Name: SONAR
+--  Author: MarxWasRight-Fairbanks[H]
+--
 -- Description: alternate minimap tracking type every GCD
 -- Author: MarxWasRight-Fairbanks[H]
 --
 -- TODO:
--- 1. Add an event listener for entering combat and stop the
---    looping because it eats GCDs [DONE]
--- 2. XML GUI interface to control which tracking types are
+-- 1. XML GUI interface to control which tracking types are
 --    cycled through
--- 3. Disable addon if current character only has 1 or less
---    tracking types [DONE]
+-- 2. Add user options to GUI
+-- 3. Save user options
 --
 --      Default text color: 0xffF94F97
 --
 -- ***********************************************************
 
+-- name, table
 local AddOn, SONARcore = ...;
 
 -- ***********************************
@@ -26,7 +27,6 @@ local sonarCurrID = 0;
 local sonarTrackerID = {};
 local sonarIDX = 0;
 local sonarHasFishing = false;
-local sonarStarting = true;
 
 -- **********************************************
 -- ** START MAIN FRAME DEFINITION SECTION *******
@@ -82,8 +82,9 @@ function initializeSonar(self)
 
     -- if we found nothing then turn off the addon
     namechk, _, _, _, _ = GetTrackingInfo(1);
-    --printclr("namechk: " .. namechk);
-    if ((sonarIDX <= 1 and sonarHasFishing == false) or (sonarIDX <= 0 and sonarHasFishing == true) or (sonarIDX == 1 and sonarHasFishing == true and namechk == "Find Fish")) then
+    if ((sonarIDX <= 1 and sonarHasFishing == false) or 
+        (sonarIDX <= 0 and sonarHasFishing == true)  or 
+        (sonarIDX == 1 and sonarHasFishing == true and namechk == "Find Fish")) then
         sonarRunning = false;
         printclr("NEED MINIMUM 2+ GATHERING PROFESSIONS - SONAR DISABLED");
     end
@@ -93,16 +94,9 @@ function cycleMinimapTracker(self)
     if sonarRunning == true then
         if (sonarCurrID > sonarIDX) then
             sonarCurrID = 1;
-            --[[
-            if sonarHasFishing == true then
-                CastSpellByName("Find Fish");
-                return;
-            end
-            --]]
         end
         
         namechkm, _, _, _, _ = GetTrackingInfo(sonarCurrID);
-
         if(namechkm == "Find Fish") then
             CastSpellByName("Find Fish");
             sonarCurrID = sonarCurrID + 1;
@@ -118,10 +112,10 @@ function stopSonar()
     -- stop the addon's cycling action
     if (sonarTimer ~= nil) then
         if not sonarTimer:IsCancelled() then
-            --printclr("not cancelled"); -- debug
-        end
-        if not sonarTimer:IsCancelled() then
             sonarTimer:Cancel();
+            -- the print statement below can get obnoxious
+            -- TODO: add an option to suppress messages when
+            -- the GUI is built
             printclr("Halted!");
         end
     end
@@ -136,14 +130,6 @@ SLASH_SONAR1 = "/snr";
 SlashCmdList["SONAR"] = function(msg)
     msg = string.upper(msg);
     if (msg == "S") then
-        --printclr("sonarIDX: " .. sonarIDX);
-        --[[
-        if sonarRunning then
-            printclr("sonarRunning TRUE");
-        else
-            printclr("sonarRunning FALSE");
-        end
-        --]]
         if sonarRunning == true then -- we've detected there are at least 2 trackers to switch between
             sonarTimer = C_Timer.NewTicker(2, cycleMinimapTracker)
         end
@@ -151,19 +137,21 @@ SlashCmdList["SONAR"] = function(msg)
         stopSonar();
     elseif (msg == "TRACKTYPE") then
         if sonarRunning == false then
-            printclr("Did not detect enough tracking types!");
+            printclr("Did not detect 2+ tracking types - halted");
         else
-            printclr(" -- SONAR DETECTED TRACKERS -- ");
+            printclr(" --SONAR DETECTED TRACKERS-- ");
             for i=1,sonarIDX do
                 nametmp, _, _, _, _ = GetTrackingInfo(i);
                 printclr(sonarTrackerID[i] .. "- " .. nametmp);
             end
         end
+    elseif (msg == "GOGOGO") then
+        printclr("HE SAID THE THING!!");
     else
         printclr(" -- SONAR ADDON HELP -- ");
-        printclr("'/snr S' to start Sonar");
-        printclr("'/snr E' to stop Sonar");
-        printclr("'/snr TRACKTYPE' to print detected tacking types");
+        printclr("'/snr s' to start Sonar");
+        printclr("'/snr e' to stop Sonar");
+        printclr("'/snr tracktype' to print detected tacking types");
     end
 end
 
