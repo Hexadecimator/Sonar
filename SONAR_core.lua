@@ -93,11 +93,22 @@ function cycleMinimapTracker(self)
     if sonarRunning == true then
         if (sonarCurrID > sonarIDX) then
             sonarCurrID = 1;
+            --[[
             if sonarHasFishing == true then
                 CastSpellByName("Find Fish");
                 return;
             end
+            --]]
         end
+        
+        namechkm, _, _, _, _ = GetTrackingInfo(sonarCurrID);
+
+        if(namechkm == "Find Fish") then
+            CastSpellByName("Find Fish");
+            sonarCurrID = sonarCurrID + 1;
+            return;
+        end
+
         SetTracking(sonarCurrID,true);
         sonarCurrID = sonarCurrID + 1;
     end   
