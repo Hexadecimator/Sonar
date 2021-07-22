@@ -7,7 +7,7 @@ Upon Addon initialization, all available tracking types (for professions - thing
 
 Note that this addon will only work If the currently logged-in character has at MINIMUM 2 profession minimap trackers to toggle through. If the current character has 1 or less toggle-able minimap gathering professions, the Sonar addon will turn itself off.
 
-Currently Sonar does not have a GUI. This will be the next step once the back-end is nailed down. 
+Currently Sonar does not have a GUI. This will be the next step once the back-end is completed. 
 
 You must interact with it through command line:
  - "/snr help" to print list of commands
