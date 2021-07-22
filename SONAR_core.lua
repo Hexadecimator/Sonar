@@ -110,14 +110,12 @@ end
 
 function stopSonar()
     -- stop the addon's cycling action
-    if (sonarTimer ~= nil) then
-        if not sonarTimer:IsCancelled() then
-            sonarTimer:Cancel();
-            -- the print statement below can get obnoxious
-            -- TODO: add an option to suppress messages when
-            -- the GUI is built
-            printclr("Halted!");
-        end
+    if (sonarTimer) then
+        sonarTimer:Cancel();
+        -- the print statement below can get obnoxious
+        -- TODO: add an option to suppress messages when
+        -- the GUI is built
+        printclr("Halted!");
     end
 end
 
