@@ -27,6 +27,8 @@ local sonarCurrID = 0;
 local sonarTrackerID = {};
 local sonarIDX = 0;
 local sonarHasFishing = false;
+local showfishing = true;
+local sonarToggle = true;
 
 -- **********************************************
 -- ** START MAIN FRAME DEFINITION SECTION *******
@@ -97,7 +99,7 @@ function cycleMinimapTracker(self)
         end
         
         namechkm, _, _, _, _ = GetTrackingInfo(sonarCurrID);
-        if(namechkm == "Find Fish") then
+        if(namechkm == "Find Fish" and showfishing) then
             CastSpellByName("Find Fish");
             sonarCurrID = sonarCurrID + 1;
             return;
@@ -111,6 +113,8 @@ end
 function stopSonar()
     -- stop the addon's cycling action
     if (sonarTimer) then
+        if sonarTimer:IsCancelled() then return; end -- called to stop but addon is already stopped
+
         sonarTimer:Cancel();
         -- the print statement below can get obnoxious
         -- TODO: add an option to suppress messages when
@@ -127,12 +131,17 @@ end
 SLASH_SONAR1 = "/snr";
 SlashCmdList["SONAR"] = function(msg)
     msg = string.upper(msg);
-    if (msg == "S") then
-        if sonarRunning == true then -- we've detected there are at least 2 trackers to switch between
-            sonarTimer = C_Timer.NewTicker(2, cycleMinimapTracker)
-        end
-    elseif (msg == "E") then
-        stopSonar();
+    if (msg == "T") then
+        if (sonarToggle) then
+            if sonarRunning == true then -- we've detected there are at least 2 trackers to switch between
+                sonarTimer = C_Timer.NewTicker(2, cycleMinimapTracker)
+                printclr("Started!");
+                sonarToggle = false;
+            end
+        else
+            stopSonar();
+            sonarToggle = true;
+        end        
     elseif (msg == "TRACKTYPE") then
         if sonarRunning == false then
             printclr("Did not detect 2+ tracking types - halted");
@@ -145,10 +154,18 @@ SlashCmdList["SONAR"] = function(msg)
         end
     elseif (msg == "GOGOGO") then
         printclr("HE SAID THE THING!!");
+    elseif (msg == "NOFISH") then
+        if (showfishing) then
+            showfishing = false;
+            printclr("[SONAR] Fishing turned OFF");
+        else
+            showfishing = true;
+            printclr("[SONAR] Fishing turned ON");
+        end
     else
-        printclr(" -- SONAR ADDON HELP -- ");
-        printclr("'/snr s' to start Sonar");
-        printclr("'/snr e' to stop Sonar");
+        printclr("-- SONAR ADDON HELP -- ");
+        printclr("'/snr t' toggle (start/stop) Sonar");
+        printclr("'/snr nofish' to toggle fishing display")
         printclr("'/snr tracktype' to print detected tacking types");
     end
 end
