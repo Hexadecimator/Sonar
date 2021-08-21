@@ -116,6 +116,7 @@ function stopSonar()
         if sonarTimer:IsCancelled() then return; end -- called to stop but addon is already stopped
 
         sonarTimer:Cancel();
+        sonarToggle = true;
         -- the print statement below can get obnoxious
         -- TODO: add an option to suppress messages when
         -- the GUI is built
