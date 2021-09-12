@@ -47,7 +47,6 @@ function initializeSonar(self)
         --name, texture, active, category, nested = GetTrackingInfo(i);
         name, _, _, category, _ = GetTrackingInfo(i);
 
-        -- this if statement is an affront to god and i'm sorry
         if ((category == "spell") and ((name ~= "Track Humanoids")  and
                                        (name ~= "Track Beasts")     and
                                        (name ~= "Track Demons")     and
@@ -56,7 +55,9 @@ function initializeSonar(self)
                                        (name ~= "Track Giants")     and
                                        (name ~= "Track Hidden")     and
                                        (name ~= "Track Undead")     and
-                                       (name ~= "Sense Undead")))   then
+                                       (name ~= "Sense Undead")     and
+                                       (name ~= "Sense Demons")     and
+                                       (name ~= "Find Treasure")))  then
             sonarIDX = sonarIDX + 1;
             sonarTrackerID[sonarIDX] = i;
             printclr(name .. " added to sonarTrackerTypes.");
